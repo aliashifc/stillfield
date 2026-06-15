@@ -26,6 +26,27 @@
   font-style: normal;
   font-display: swap;
 }
+@font-face {
+  font-family: 'Quicksand';
+  src: url('/fonts/quicksand-300.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Quicksand';
+  src: url('/fonts/quicksand-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Quicksand';
+  src: url('/fonts/quicksand-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
   --bg: #060607;
@@ -37,6 +58,7 @@
   --halo: 196, 199, 214;
   --display: "Tenor Sans", "Times New Roman", serif;
   --body: "Hanken Grotesk", system-ui, sans-serif;
+  --quick: "Quicksand", system-ui, sans-serif;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -65,7 +87,7 @@ button { cursor: pointer; }
   inset: 0;
   z-index: 0;
   background:
-    radial-gradient(34% 22% at 50% 84%, rgba(var(--halo), 0.17), transparent 70%);
+    radial-gradient(32% 26% at 50% 50%, rgba(var(--halo), 0.17), transparent 70%);
 }
 
 /* ── Dome (WebGL) ──────────────────────────────── */
@@ -92,7 +114,7 @@ button { cursor: pointer; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 38px 56px;
+  padding: 70px 100px;
 }
 .brand {
   display: inline-flex;
@@ -100,12 +122,13 @@ button { cursor: pointer; }
   gap: 22px;
 }
 .wordmark {
-  font-family: var(--display);
-  font-size: 19px;
-  letter-spacing: 0.42em;
+  font-family: var(--quick);
+  font-weight: 500;
+  font-size: 18px;
+  letter-spacing: 0.68em;
   color: var(--ink);
   line-height: 1;
-  padding-left: 0.42em;
+  padding-left: 0.68em;
 }
 .mark {
   display: block;
@@ -114,18 +137,25 @@ button { cursor: pointer; }
   flex-shrink: 0;
 }
 
-/* sound toggle — server-rendered but inert/hidden until the island wires it */
+/* sound toggle — a circular pill button (filled light, dark glyph), like the
+   pause control in the brief. Server-rendered but inert/hidden until wired.
+   Shows a play triangle at rest; a pause bar while the brown noise plays. */
 .sound-toggle {
   display: inline-flex;
-  background: none;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
   border: none;
-  padding: 4px;
-  color: var(--ink-dim);
-  transition: color 0.25s ease;
+  padding: 0;
+  background: var(--ink);
+  color: #0a0a0a;
+  transition: transform 0.25s ease, background 0.25s ease;
 }
 .sound-toggle[hidden] { display: none; }
-.sound-toggle:hover { color: var(--ink); }
-.sound-toggle .snd { display: block; width: 22px; height: 22px; }
+.sound-toggle:hover { background: #ffffff; transform: scale(1.08); }
+.sound-toggle .snd { display: block; width: 13px; height: 13px; }
 .sound-toggle .snd-on { display: none; }
 .sound-toggle.is-on .snd-on { display: block; }
 .sound-toggle.is-on .snd-off { display: none; }
@@ -134,8 +164,8 @@ button { cursor: pointer; }
 .floor-cta {
   position: absolute;
   left: 50%;
-  top: 71%;
-  transform: translateX(-50%);
+  top: 50%;
+  transform: translate(-50%, -50%);
   z-index: 3;
 }
 /* the pill IS the lamp: filled warm white, casting its own glow */
@@ -143,13 +173,13 @@ button { cursor: pointer; }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 15px 36px;
+  padding: 12px 22px;
   border: none;
   border-radius: 999px;
   background: var(--ink);
   color: #0a0a0a;
-  font-family: var(--body);
-  font-size: 11.5px;
+  font-family: var(--quick);
+  font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.28em;
   text-indent: 0.28em;
@@ -167,46 +197,40 @@ button { cursor: pointer; }
     0 0 110px rgba(var(--halo), 0.30);
 }
 
-/* ── Captions at the edges ─────────────────────── */
+/* ── Captions on the horizon, flanking the lamp ──── */
 .lower {
   position: absolute;
-  left: 56px;
-  right: 56px;
-  bottom: 44px;
+  left: 50%;
+  top: 50%;
+  /* centred band; widened so both the lede and the body sit further out,
+     giving more breathing room either side of the button */
+  transform: translate(-50%, -50%);
+  width: min(920px, 84%);
   z-index: 3;
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
   gap: 48px;
 }
-.caption {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 12px;
-  align-items: start;
-  max-width: 300px;
-}
-.caption .bullet {
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  background: var(--ink);
-  margin-top: 7px;
-  flex-shrink: 0;
-}
+.caption { max-width: 180px; }
+/* both the lede and the body block are vertically centred on the button's
+   centre line */
+.caption:first-child { max-width: 210px; }
 .lede {
-  font-family: var(--display);
+  font-family: var(--quick);
   font-weight: 400;
-  font-size: 16px;
-  letter-spacing: 0.06em;
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
   line-height: 1.5;
   color: var(--ink);
 }
 .caption-right { text-align: left; }
 .body-copy {
-  font-size: 13px;
+  font-family: var(--quick);
+  font-size: 12.5px;
   font-weight: 300;
-  line-height: 1.65;
-  letter-spacing: 0.02em;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
   color: var(--ink-dim);
 }
 
@@ -236,11 +260,14 @@ button { cursor: pointer; }
 @media (max-width: 820px) {
   .topbar { padding: 26px 28px; }
   .wordmark { font-size: 16px; }
-  .floor-cta { top: 64%; }
+  .floor-cta { top: 50%; }
   .lower {
     left: 28px;
     right: 28px;
+    top: auto;
     bottom: 30px;
+    width: auto;
+    transform: none;
     flex-direction: column;
     align-items: flex-start;
     gap: 18px;

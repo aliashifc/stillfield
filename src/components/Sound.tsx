@@ -7,7 +7,7 @@ import { useEffect, useRef } from 'react';
   toggle click, which satisfies browser autoplay policy; there is no gate.
 */
 
-const LEVEL = 0.28; // gentle resting volume (heavy low-pass makes it quieter)
+const LEVEL = 0.10; // gentle resting volume (heavy low-pass makes it quieter)
 
 export default function Sound() {
   const ctxRef = useRef<AudioContext | null>(null);
@@ -34,47 +34,56 @@ export default function Sound() {
       if (!AC) return;
       const ctx = new AC();
 
-      // 8-second looping buffer of brown noise (random walk → -6dB/oct, low-heavy)
-      const length = ctx.sampleRate * 8;
+      // 12-second loop of soft brown noise. A leaky-integrated random walk
+      // gives the deep -6 dB/oct brown tilt; a low integrator corner makes it
+      // extra low-heavy — the deep, rumbling "distant waterfall" that's found
+      // most calming. The long buffer keeps the loop imperceptible.
+      const length = ctx.sampleRate * 12;
       const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
       const data = buffer.getChannelData(0);
       let last = 0;
       for (let i = 0; i < length; i++) {
         const white = Math.random() * 2 - 1;
-        last = (last + 0.018 * white) / 1.018;
-        data[i] = last * 3.5;
+        last = (last + 0.022 * white) / 1.022;
+        data[i] = last * 3.4;
       }
       const src = ctx.createBufferSource();
       src.buffer = buffer;
       src.loop = true;
 
-      // Warm it right down into a soft rumble. Two cascaded low-passes roll
-      // the highs off gently (-24 dB/oct); a high-pass trims sub-mud.
+      // Trim inaudible sub-rumble, then roll the highs off hard so only the
+      // deep, soothing low end remains — no hiss. Three cascaded low-passes
+      // (≈ -18 dB/oct) sitting low, for a soft, enveloping wash.
       const hp = ctx.createBiquadFilter();
       hp.type = 'highpass';
-      hp.frequency.value = 45;
+      hp.frequency.value = 95;
       const lp1 = ctx.createBiquadFilter();
       lp1.type = 'lowpass';
-      lp1.frequency.value = 340;
-      lp1.Q.value = 0.4;
+      lp1.frequency.value = 300;
+      lp1.Q.value = 0.5;
       const lp2 = ctx.createBiquadFilter();
       lp2.type = 'lowpass';
-      lp2.frequency.value = 700;
-      lp2.Q.value = 0.3;
+      lp2.frequency.value = 480;
+      lp2.Q.value = 0.4;
+      const lp3 = ctx.createBiquadFilter();
+      lp3.type = 'lowpass';
+      lp3.frequency.value = 760;
+      lp3.Q.value = 0.3;
 
-      // a slow "tide": sweep the cutoff so the noise swells and recedes
-      // like calm breathing — far more relaxing than a static wash
+      // a very slow, shallow "tide": drift the cutoff so the wash gently
+      // swells and recedes like calm breathing — ~50 s per cycle, subtle
+      // enough that it never pulls focus.
       const lfo = ctx.createOscillator();
       lfo.type = 'sine';
-      lfo.frequency.value = 0.05; // ~20s per cycle
+      lfo.frequency.value = 0.02; // ~50s per cycle
       const lfoDepth = ctx.createGain();
-      lfoDepth.gain.value = 120;
+      lfoDepth.gain.value = 70;
       lfo.connect(lfoDepth).connect(lp1.frequency);
       lfo.start();
 
       const gain = ctx.createGain();
       gain.gain.value = 0;
-      src.connect(hp).connect(lp1).connect(lp2).connect(gain).connect(ctx.destination);
+      src.connect(hp).connect(lp1).connect(lp2).connect(lp3).connect(gain).connect(ctx.destination);
       src.start();
       ctxRef.current = ctx;
       gainRef.current = gain;

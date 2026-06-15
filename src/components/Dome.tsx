@@ -24,10 +24,12 @@ uniform float uGlow;   // lamp energy: boot ramp × pointer proximity, 0..1
 // surface — no drum/dome join, so no seam line on the wall.
 const float RC = 6.0;                      // room radius at the floor
 const float RY = 10.0;                     // crown height (taller than wide → dome)
-const vec3  LP = vec3(0.0, 0.62, -3.6);    // the lamp: low over the far floor,
-                                           // projected dead-centre behind the
-                                           // pill on the horizon; its bright
-                                           // core stays hidden by the button
+const vec3  LP = vec3(0.0, 3.84, -3.39);   // the lamp: sits on the far wall at
+                                           // eye level, placed on the camera's
+                                           // centre ray so it projects to the
+                                           // dead-centre of the screen behind
+                                           // the pill; its bright core stays
+                                           // hidden by the button
 
 // ── noise ──────────────────────────────────────────
 float hash(vec2 p) {
@@ -108,7 +110,7 @@ void main() {
   float h0 = surf(suv);
   float hu = surf(suv + vec2(e, 0.0));
   float hv = surf(suv + vec2(0.0, e));
-  float bumpAmp = floorHit ? 0.05 : 0.22;
+  float bumpAmp = floorHit ? 0.15 : 0.22;
   n = normalize(n - (tu * (hu - h0) + tv * (hv - h0)) / e * bumpAmp);
 
   float albedo = floorHit ? 0.42 + 0.30 * h0 : 0.60 + 0.40 * h0;
@@ -126,18 +128,26 @@ void main() {
 
   if (!floorHit) {
     // the crown recedes to night-black even when the lamp swells
-    I *= mix(1.0, 0.18, smoothstep(2.5, 7.5, P.y));
-    // thin contact occlusion at the floor seam, glow still continuous
-    I *= 0.80 + 0.20 * smoothstep(0.0, 0.5, P.y);
+    I *= mix(1.0, 0.18, smoothstep(5.0, 9.5, P.y));
   } else {
-    // honed stone: the lamp reflects as a vertical streak running toward
-    // the viewer — narrow across, long in depth, like moonlight on water.
-    // The streak (not a round pool) is what reads the floor as flat.
+    // matte honed stone: the lamp gives a soft, broad sheen toward the
+    // viewer — not a mirror. A low specular exponent keeps it diffuse, the
+    // floor bump scatters it, so the floor never reads wet or slippery.
     vec3 hlf = normalize(L + normalize(ro - P));
     vec2 dxz = P.xz - LP.xz;
-    float streak = exp(-(abs(dxz.x) * 1.15 + abs(dxz.y) * 0.20));
-    I += E * 0.34 * pow(max(dot(n, hlf), 0.0), 40.0) * streak;
+    float streak = exp(-(abs(dxz.x) * 1.05 + abs(dxz.y) * 0.18));
+    I += E * 0.17 * pow(max(dot(n, hlf), 0.0), 12.0) * streak;
   }
+
+  // ── the floor/wall seam: break the perfect ellipse ──
+  // a soft shadow gathers where the wall meets the floor, but its depth and
+  // reach ripple around the room — dust, age, an imperfect hand-troweled
+  // join — so the seam never reads as a machined line.
+  float azc = atan(P.z, P.x);
+  float seamRipple = fbm(vec2(azc * 3.0 + 5.0, 1.7));            // uneven around
+  float seamDist = floorHit ? (RC - length(P.xz)) : P.y;        // 0 at the seam
+  float seam = exp(-max(seamDist, 0.0) * (3.2 + 2.6 * seamRipple));
+  I *= 1.0 - seam * (0.20 + 0.34 * seamRipple);
 
   // ambient spill: enough for the seam arc and the lower vault to emerge
   I += albedo * E * 0.05 * exp(-d2 * 0.022);

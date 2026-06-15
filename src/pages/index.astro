@@ -1,6 +1,5 @@
 ---
 import Base from '../layouts/Base.astro';
-import Mark from '../components/Mark.astro';
 import Modal from '../components/Modal';
 import Sound from '../components/Sound';
 import Dome from '../components/Dome';
@@ -10,7 +9,7 @@ import '../styles/modal.css';
 <Base>
   <Fragment slot="head">
     <link rel="preload" href="/fonts/tenor-sans-400.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/hanken-grotesk-300.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/quicksand-400.woff2" as="font" type="font/woff2" crossorigin />
   </Fragment>
 
   <h1 class="sr-only">Stillfield — non-sensory calm pods for spas, hotels &amp; workplaces</h1>
@@ -22,18 +21,15 @@ import '../styles/modal.css';
 
     <header class="topbar">
       <a href="/" class="brand" aria-label="Stillfield home">
-        <Mark />
         <span class="wordmark">STILLFIELD</span>
       </a>
       <button class="sound-toggle" data-sound type="button" aria-label="Toggle ambient sound" aria-pressed="false" hidden>
-        <svg class="snd snd-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
-          <path d="M4 9v6h3l5 4V5L7 9H4z" fill="currentColor" stroke="none"/>
-          <path d="M16 8.5a5 5 0 0 1 0 7"/>
-          <path d="M18.5 6a8.5 8.5 0 0 1 0 12"/>
+        <svg class="snd snd-off" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 6.5L18 12l-9 5.5V6.5z" fill="currentColor"/>
         </svg>
-        <svg class="snd snd-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
-          <path d="M4 9v6h3l5 4V5L7 9H4z" fill="currentColor" stroke="none"/>
-          <path d="M16 9.5l5 5M21 9.5l-5 5"/>
+        <svg class="snd snd-on" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="8.4" y="6.8" width="2.7" height="10.4" rx="1.2" fill="currentColor"/>
+          <rect x="12.9" y="6.8" width="2.7" height="10.4" rx="1.2" fill="currentColor"/>
         </svg>
       </button>
     </header>
@@ -43,14 +39,12 @@ import '../styles/modal.css';
       <button class="register" data-cta aria-haspopup="dialog">Register Interest</button>
     </div>
 
-    <!-- captions kept to the edges, leaving the beam clear -->
+    <!-- captions on the horizon, flanking the lamp -->
     <div class="lower">
       <div class="caption">
-        <span class="bullet" aria-hidden="true"></span>
         <h2 class="lede">A space where the noise ends.</h2>
       </div>
       <div class="caption caption-right">
-        <span class="bullet" aria-hidden="true"></span>
         <p class="body-copy">Non-sensory pods that deliver deep calm in 15&ndash;30 minutes. Designed for spas, wellness centres, hotels, and forward-thinking workplaces.</p>
       </div>
     </div>
