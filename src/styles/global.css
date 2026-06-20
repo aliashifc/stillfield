@@ -204,12 +204,16 @@ button { cursor: pointer; }
   top: 50%;
   /* centred band; widened so both the lede and the body sit further out,
      giving more breathing room either side of the button */
-  transform: translate(-50%, -50%);
+  /* nudged down from dead-centre so the baseline-aligned first lines of the
+     captions land on the pill's text baseline (the pill sits at top:50%) */
+  transform: translate(-50%, calc(-50% + 38px));
   width: min(920px, 84%);
   z-index: 3;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  /* lede (one line) and body-copy (several lines) share one baseline, level
+     with the Register pill — a single horizon line across the composition */
+  align-items: baseline;
   gap: 48px;
 }
 .caption { max-width: 180px; }
