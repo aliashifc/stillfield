@@ -24,7 +24,7 @@ uniform float uGlow;   // lamp energy: boot ramp × pointer proximity, 0..1
 // surface — no drum/dome join, so no seam line on the wall.
 const float RC = 6.0;                      // room radius at the floor
 const float RY = 10.0;                     // crown height (taller than wide → dome)
-const vec3  LP = vec3(0.0, 3.84, -3.39);   // the lamp: sits on the far wall at
+const vec3  LP = vec3(0.0, 4.63, -3.39);   // the lamp: sits on the far wall at
                                            // eye level, placed on the camera's
                                            // centre ray so it projects to the
                                            // dead-centre of the screen behind
@@ -67,7 +67,7 @@ void main() {
 
   // ── camera: standing in the rotunda, fixed ──
   vec3 ro = vec3(0.0, 1.7, 4.6);
-  vec3 fw = normalize(vec3(0.0, 3.6, -2.5) - ro);
+  vec3 fw = normalize(vec3(0.0, 4.3, -2.5) - ro);
   vec3 rt = normalize(cross(fw, vec3(0.0, 1.0, 0.0)));
   vec3 up = cross(rt, fw);
   vec3 rd = normalize(fw + (uv.x * rt + uv.y * up) * 0.95);  // ~87° fov
@@ -267,7 +267,7 @@ export default function Dome() {
       proxEased += (prox - proxEased) * 0.03;
       const boot = reduce ? 1 : Math.min(1, t / 2.2);        // the lamp ignites
       gl.uniform1f(uTime, reduce ? 0 : t);
-      gl.uniform1f(uGlow, boot * boot * (0.62 + 0.38 * proxEased));
+      gl.uniform1f(uGlow, boot * boot * (0.50 + 0.34 * proxEased));
       gl.drawArrays(gl.TRIANGLES, 0, 3);
       if (!ready) { ready = true; host.classList.add('is-ready'); }
       if (!reduce) raf = requestAnimationFrame(frame);
