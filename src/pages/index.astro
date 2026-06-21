@@ -1,10 +1,11 @@
 ---
 import Base from '../layouts/Base.astro';
 import Modal from '../components/Modal';
-import Sound from '../components/Sound';
+import Ambience from '../components/Ambience';
 import Dome from '../components/Dome';
 import '../styles/global.css';
 import '../styles/modal.css';
+import '../styles/ambience.css';
 ---
 <Base>
   <Fragment slot="head">
@@ -51,5 +52,5 @@ import '../styles/modal.css';
   </main>
 
   <Modal client:idle />
-  <Sound client:idle />
+  <Ambience client:load />
 </Base>

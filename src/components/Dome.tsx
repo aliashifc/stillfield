@@ -22,14 +22,16 @@ uniform float uGlow;   // lamp energy: boot ramp × pointer proximity, 0..1
 // one continuous tall ellipsoid: walls rise steeply from the floor (radius
 // RC) and curve over into a dome at the crown (height RY). A single smooth
 // surface — no drum/dome join, so no seam line on the wall.
-const float RC = 6.0;                      // room radius at the floor
-const float RY = 10.0;                     // crown height (taller than wide → dome)
-const vec3  LP = vec3(0.0, 4.63, -3.39);   // the lamp: sits on the far wall at
-                                           // eye level, placed on the camera's
-                                           // centre ray so it projects to the
-                                           // dead-centre of the screen behind
-                                           // the pill; its bright core stays
-                                           // hidden by the button
+const float RC = 30.0;                      // room radius at the floor
+const float RY = 50.0;                      // crown height (taller than wide → dome)
+const vec3  LP = vec3(0.0, 12.71, -25.47);  // the lamp: far across the enlarged
+                                            // room, just shy of the far wall, on
+                                            // the camera's centre ray so it
+                                            // projects to dead-centre behind the
+                                            // pill (core hidden by the button).
+                                            // It stays a fixed-size light while
+                                            // the room towers around it, so the
+                                            // viewer reads as small.
 
 // ── noise ──────────────────────────────────────────
 float hash(vec2 p) {
@@ -127,8 +129,9 @@ void main() {
   float I = albedo * lam * E * K / pow(d2, 0.72);
 
   if (!floorHit) {
-    // the crown recedes to night-black even when the lamp swells
-    I *= mix(1.0, 0.18, smoothstep(5.0, 9.5, P.y));
+    // the crown recedes to night-black even when the lamp swells — raised to
+    // the taller dome so the black ceiling now soars far overhead
+    I *= mix(1.0, 0.18, smoothstep(25.0, 46.0, P.y));
   } else {
     // matte honed stone: the lamp gives a soft, broad sheen toward the
     // viewer — not a mirror. A low specular exponent keeps it diffuse, the
@@ -152,8 +155,12 @@ void main() {
   // ambient spill: enough for the seam arc and the lower vault to emerge
   I += albedo * E * 0.05 * exp(-d2 * 0.022);
 
-  // depth: the far side of the room recedes
-  I *= mix(1.0, 0.5, clamp((tHit - 4.0) / 16.0, 0.0, 1.0));
+  // atmospheric recession: the far reaches of the great room dissolve toward
+  // near-black over a long range, so the eye can't find the boundary and reads
+  // the space as vast. Eased (squared) so the near pool is untouched and only
+  // the distance melts away.
+  float haze = clamp((tHit - 6.0) / 80.0, 0.0, 1.0);
+  I *= mix(1.0, 0.07, haze * haze);
 
   // ── the lamp's halo: a soft sphere of light in the air ──
   vec3 w = LP - ro;
@@ -260,19 +267,35 @@ export default function Dome() {
     if (!reduce) window.addEventListener('mousemove', onMove);
 
     const t0 = performance.now();
+    // the lamp stays dark until the visitor steps in through the gate, then
+    // kindles from black ("stepping inside"). ?lit ignites at once for OG renders.
+    let enterT: number | null = lit ? t0 : null;
     let raf = 0;
     let ready = false;
     const frame = () => {
       const t = (performance.now() - t0) / 1000;
       proxEased += (prox - proxEased) * 0.03;
-      const boot = reduce ? 1 : Math.min(1, t / 2.2);        // the lamp ignites
+      const boot = enterT === null
+        ? 0
+        : reduce ? 1 : Math.min(1, (performance.now() - enterT) / 2200);
       gl.uniform1f(uTime, reduce ? 0 : t);
-      gl.uniform1f(uGlow, boot * boot * (0.50 + 0.34 * proxEased));
+      // partial distance compensation — the lamp sits ~3.8× farther across the
+      // vast room; surrounds left to darken, but the lamp itself burns a little
+      // brighter so its bloom carries across the void
+      gl.uniform1f(uGlow, boot * boot * (3.45 + 2.30 * proxEased));
       gl.drawArrays(gl.TRIANGLES, 0, 3);
       if (!ready) { ready = true; host.classList.add('is-ready'); }
       if (!reduce) raf = requestAnimationFrame(frame);
     };
     raf = requestAnimationFrame(frame);
+
+    // the gate fires this as the visitor enters — start the ignition clock
+    const onEnter = () => {
+      if (enterT !== null) return;
+      enterT = performance.now();
+      if (reduce) frame();   // no raf loop under reduced motion — paint once, lit
+    };
+    window.addEventListener('stillfield:enter', onEnter);
 
     const onVis = () => {
       cancelAnimationFrame(raf);
@@ -284,6 +307,7 @@ export default function Dome() {
       cancelAnimationFrame(raf);
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('stillfield:enter', onEnter);
       document.removeEventListener('visibilitychange', onVis);
       gl.deleteBuffer(buf);
       gl.deleteProgram(prog);
