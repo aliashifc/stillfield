@@ -166,7 +166,8 @@ button { cursor: pointer; }
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  z-index: 3;
+  /* above .lower, which shares the centre of the screen with it */
+  z-index: 4;
 }
 /* the pill IS the lamp: filled warm white, casting its own glow */
 .register {
@@ -209,6 +210,10 @@ button { cursor: pointer; }
   transform: translate(-50%, calc(-50% + 38px));
   width: min(920px, 84%);
   z-index: 3;
+  /* this band is 920px wide and straddles the pill: the empty gap between the
+     two captions would otherwise sit over the button and eat its clicks.
+     Only the caption text itself takes the pointer. */
+  pointer-events: none;
   display: flex;
   justify-content: space-between;
   /* lede (one line) and body-copy (several lines) share one baseline, level
@@ -216,7 +221,8 @@ button { cursor: pointer; }
   align-items: baseline;
   gap: 48px;
 }
-.caption { max-width: 180px; }
+/* re-enable the pointer on the text itself so captions stay selectable */
+.caption { max-width: 180px; pointer-events: auto; }
 /* both the lede and the body block are vertically centred on the button's
    centre line */
 .caption:first-child { max-width: 210px; }
@@ -250,7 +256,8 @@ button { cursor: pointer; }
 }
 
 /* ── Entrance ──────────────────────────────────── */
-@media (prefers-reduced-motion: never-og) {\n  .topbar, .floor-cta, .lower {
+@media (prefers-reduced-motion: no-preference) {
+  .topbar, .floor-cta, .lower {
     opacity: 0;
     animation: fade 1.8s ease forwards;
   }
