@@ -157,16 +157,29 @@ function notify(d) {
   });
 }
 
+/* Brand palette, lifted from src/styles/global.css. Mail clients strip <style>
+   blocks and never load webfonts, so everything here is inline and the type
+   stack falls back exactly as the site's own does. */
+var BG = '#060607';
+var INK = '#ece9e3';
+var INK_DIM = '#8b8b92';
+var INK_FAINT = '#5a5a61';
+var DISPLAY = "'Tenor Sans', 'Times New Roman', serif";
+var BODY_FONT = "'Hanken Grotesk', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif";
+
 function acknowledge(d) {
-  var body = [
-    'Hello ' + str(d.firstName) + ',',
+  var name = str(d.firstName);
+
+  var text = [
+    'Hello ' + name + ',',
     '',
     'Thank you for registering your interest in Stillfield.',
     '',
-    'We have your enquiry and someone will be in touch personally as pods',
+    'We have your enquiry, and someone will be in touch personally as pods',
     'become available to partners.',
     '',
-    'If you need to add anything in the meantime, simply reply to this email.',
+    'If you would like to add anything in the meantime, simply reply to this',
+    'email.',
     '',
     '— ' + COMPANY_NAME,
     REPLY_TO,
@@ -175,7 +188,8 @@ function acknowledge(d) {
   var options = {
     to: str(d.email),
     subject: 'Stillfield — we have your enquiry',
-    body: body,
+    body: text,
+    htmlBody: acknowledgeHtml(name),
     name: 'Stillfield',
   };
 
@@ -186,6 +200,74 @@ function acknowledge(d) {
   }
 
   MailApp.sendEmail(options);
+}
+
+function acknowledgeHtml(name) {
+  var p = 'margin:0 0 18px;font-family:' + BODY_FONT +
+          ';font-size:15px;line-height:1.75;font-weight:300;color:' + INK + ';';
+
+  return '' +
+  '<!-- preheader: shows in the inbox list, hidden in the message itself -->' +
+  '<div style="display:none;max-height:0;overflow:hidden;opacity:0;">' +
+    'We have your enquiry. Someone will be in touch personally.' +
+  '</div>' +
+
+  /* Outer table carries the background: without it, clients that ignore a
+     styled <body> leave white margins around a dark email. */
+  '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"' +
+  ' style="background-color:' + BG + ';margin:0;padding:0;width:100%;">' +
+  '<tr><td align="center" style="padding:56px 20px;">' +
+
+    '<table role="presentation" width="560" cellpadding="0" cellspacing="0" border="0"' +
+    ' style="width:560px;max-width:100%;">' +
+
+      '<tr><td align="center" style="padding-bottom:10px;">' +
+        '<span style="font-family:' + DISPLAY + ';font-size:15px;letter-spacing:0.44em;' +
+        'text-indent:0.44em;color:' + INK + ';text-transform:uppercase;">Stillfield</span>' +
+      '</td></tr>' +
+
+      '<tr><td style="padding-bottom:44px;">' +
+        '<div style="height:1px;background-color:#1c1c1f;line-height:1px;font-size:0;">&nbsp;</div>' +
+      '</td></tr>' +
+
+      '<tr><td>' +
+        '<p style="' + p + '">Hello ' + esc(name) + ',</p>' +
+        '<p style="' + p + '">Thank you for registering your interest in Stillfield.</p>' +
+        '<p style="' + p + '">We have your enquiry, and someone will be in touch personally ' +
+          'as pods become available to partners.</p>' +
+        '<p style="' + p + 'margin-bottom:0;">If you would like to add anything in the ' +
+          'meantime, simply reply to this email.</p>' +
+      '</td></tr>' +
+
+      '<tr><td style="padding:44px 0 0;">' +
+        '<div style="height:1px;background-color:#1c1c1f;line-height:1px;font-size:0;">&nbsp;</div>' +
+      '</td></tr>' +
+
+      '<tr><td style="padding-top:20px;">' +
+        '<p style="margin:0;font-family:' + BODY_FONT + ';font-size:13px;line-height:1.7;' +
+        'color:' + INK_DIM + ';">' + esc(COMPANY_NAME) + '<br />' +
+          '<a href="mailto:' + esc(REPLY_TO) + '" style="color:' + INK_DIM + ';' +
+          'text-decoration:none;">' + esc(REPLY_TO) + '</a>' +
+        '</p>' +
+      '</td></tr>' +
+
+      '<tr><td style="padding-top:28px;">' +
+        '<p style="margin:0;font-family:' + BODY_FONT + ';font-size:11px;line-height:1.7;' +
+        'color:' + INK_FAINT + ';">You are receiving this because you registered your ' +
+        'interest on the Stillfield website.</p>' +
+      '</td></tr>' +
+
+    '</table>' +
+  '</td></tr></table>';
+}
+
+/** The name comes from a public form, so it is never trusted in markup. */
+function esc(v) {
+  return str(v)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 function str(v) {
