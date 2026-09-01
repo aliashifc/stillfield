@@ -7,8 +7,8 @@ import { useState, useEffect, useRef } from 'react';
    browser to POST to it, so it lives in the source rather than a .env.
    While FORM_ENDPOINT is empty the form shows its error state and offers the
    mailto fallback — it never pretends to have sent anything.            */
-const FORM_ENDPOINT = '';
-const CONTACT_EMAIL = 'contact@stillfield.co.uk';
+const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzUMDDbVXUxvZ6fYRJSNb8gFnp5h8vxCI3VNc8eZkKVzoQ56KXGQXjy9UTK8fWYM6ng/exec';
+const CONTACT_EMAIL = 'ashif.ali@stillfield.co.uk';
 const PRIVACY_URL = '/privacy';
 
 /* Reason for getting in touch. His mockup had these as ten checkboxes; a

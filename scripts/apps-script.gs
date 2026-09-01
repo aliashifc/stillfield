@@ -44,7 +44,7 @@ var NOTIFY_TO = 'ashif.ali@stillfield.co.uk';
 var REPLY_FROM = '';
 
 /** Where replies should go, and the address shown in the acknowledgement. */
-var REPLY_TO = 'contact@stillfield.co.uk';
+var REPLY_TO = 'ashif.ali@stillfield.co.uk';
 
 /** Appears in the acknowledgement signature. */
 var COMPANY_NAME = 'Stillfield Private Limited';
