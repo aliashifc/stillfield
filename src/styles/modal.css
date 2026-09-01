@@ -17,6 +17,11 @@
   border: 1px solid var(--line-soft);
   padding: 48px 52px 44px;
   position: relative;
+  /* the form outgrew the viewport once it took first/last name, phone, job
+     title and company — let the panel scroll rather than the page behind it */
+  max-height: 88vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   transform: translateY(14px); opacity: 0;
   transition: transform 0.5s cubic-bezier(.2,.7,.2,1), opacity 0.5s cubic-bezier(.2,.7,.2,1);
   box-shadow: 0 40px 120px rgba(0,0,0,0.7), 0 0 120px rgba(var(--halo),0.05);
@@ -100,6 +105,69 @@
   margin-top: 14px;
   font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
   color: var(--ink-faint); text-align: center;
+}
+.modal-foot a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--line-soft);
+  padding-bottom: 2px;
+  transition: color 0.25s ease, border-color 0.25s ease;
+}
+.modal-foot a:hover { color: var(--ink-dim); border-bottom-color: var(--line); }
+
+/* honeypot: out of sight for people, still in the DOM for bots. Not
+   display:none — some bots skip hidden fields, which defeats the point. */
+.hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px; height: 1px;
+  overflow: hidden;
+}
+
+.field label .opt {
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--ink-faint);
+}
+.field [aria-invalid="true"] { border-bottom-color: #8c5a52; }
+
+/* marketing consent — unticked by default, and it must stay that way */
+.check {
+  display: flex; align-items: flex-start; gap: 11px;
+  font-size: 12.5px; line-height: 1.5; font-weight: 300;
+  color: var(--ink-dim);
+  cursor: pointer;
+}
+.check input {
+  appearance: none; -webkit-appearance: none;
+  flex: 0 0 auto;
+  width: 14px; height: 14px;
+  margin-top: 2px;
+  border: 1px solid var(--line);
+  background: transparent;
+  border-radius: 2px;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.check input:checked {
+  background: var(--ink);
+  border-color: var(--ink);
+}
+.check input:focus-visible { outline: 1px solid var(--ink-dim); outline-offset: 2px; }
+
+.form-msg {
+  font-size: 12.5px; line-height: 1.5; font-weight: 300;
+  color: var(--ink-dim);
+  margin-top: -4px;
+}
+.form-msg a { color: var(--ink); }
+
+.modal-submit[disabled] {
+  opacity: 0.55;
+  cursor: default;
+}
+.modal-submit[disabled]:hover {
+  background: var(--ink);
+  box-shadow: none;
 }
 
 .modal-success { text-align: center; padding: 8px 0; }
