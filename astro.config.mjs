@@ -4,7 +4,7 @@ import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://stillfield.co',
+  site: 'https://stillfield.co.uk',
   output: 'static',
   integrations: [react(), sitemap()],
 });

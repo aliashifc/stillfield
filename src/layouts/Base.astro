@@ -49,32 +49,33 @@ const ogImage = new URL('/og.jpg', Astro.site).toString();
     "@graph": [
       {
         "@type": "Organization",
-        "@id": "https://stillfield.co/#org",
+        "@id": "https://stillfield.co.uk/#org",
         "name": "Stillfield",
-        "url": "https://stillfield.co",
+        "legalName": "Stillfield Private Limited",
+        "url": "https://stillfield.co.uk",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://stillfield.co/favicon.svg"
+          "url": "https://stillfield.co.uk/favicon.svg"
         },
         "contactPoint": {
           "@type": "ContactPoint",
           "contactType": "Partner enquiries",
-          "email": "hello@stillfield.co"
+          "email": "contact@stillfield.co.uk"
         }
       },
       {
         "@type": "WebSite",
-        "@id": "https://stillfield.co/#website",
-        "url": "https://stillfield.co",
+        "@id": "https://stillfield.co.uk/#website",
+        "url": "https://stillfield.co.uk",
         "name": "Stillfield",
-        "publisher": { "@id": "https://stillfield.co/#org" }
+        "publisher": { "@id": "https://stillfield.co.uk/#org" }
       },
       {
         "@type": "Service",
-        "@id": "https://stillfield.co/#service",
+        "@id": "https://stillfield.co.uk/#service",
         "name": "Stillfield non-sensory calm pods",
         "description": "Non-sensory pods that deliver deep calm in 15–30 minutes, designed for spas, wellness centres, hotels, and workplaces.",
-        "provider": { "@id": "https://stillfield.co/#org" },
+        "provider": { "@id": "https://stillfield.co.uk/#org" },
         "areaServed": "Worldwide",
         "audience": {
           "@type": "Audience",
