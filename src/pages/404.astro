@@ -1,0 +1,75 @@
+---
+import Base from '../layouts/Base.astro';
+import '../styles/global.css';
+---
+<Base
+  title="Not found — Stillfield"
+  description="That page doesn't exist. Return to Stillfield."
+>
+  <main class="nf">
+    <p class="nf-code">404</p>
+    <h1 class="nf-title">Nothing here.</h1>
+    <p class="nf-body">The page you were looking for has gone quiet.</p>
+    <a class="nf-back" href="/">Return to Stillfield</a>
+  </main>
+</Base>
+
+<style>
+  .nf {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 28px;
+    gap: 2px;
+  }
+  .nf-code {
+    font-family: var(--quick);
+    font-size: 10.5px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 22px;
+  }
+  .nf-title {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 38px;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+    margin-bottom: 14px;
+  }
+  .nf-body {
+    font-family: var(--quick);
+    font-weight: 300;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink-dim);
+    margin-bottom: 36px;
+  }
+  .nf-back {
+    font-family: var(--quick);
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    text-indent: 0.26em;
+    color: #0a0a0a;
+    background: var(--ink);
+    border-radius: 999px;
+    padding: 13px 24px;
+    text-decoration: none;
+    box-shadow: 0 0 60px rgba(var(--halo), 0.18);
+    transition: background 0.4s ease, box-shadow 0.4s ease;
+  }
+  .nf-back:hover {
+    background: #fff;
+    box-shadow: 0 0 90px rgba(var(--halo), 0.28);
+  }
+
+  @media (max-width: 620px) {
+    .nf-title { font-size: 30px; }
+  }
+</style>
