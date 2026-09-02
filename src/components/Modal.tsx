@@ -9,7 +9,9 @@ import { useState, useEffect, useRef } from 'react';
    mailto fallback — it never pretends to have sent anything.            */
 const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzUMDDbVXUxvZ6fYRJSNb8gFnp5h8vxCI3VNc8eZkKVzoQ56KXGQXjy9UTK8fWYM6ng/exec';
 const CONTACT_EMAIL = 'ashif.ali@stillfield.co.uk';
-const PRIVACY_URL = '/privacy';
+/* Trailing slash on purpose: Astro serves the page at /privacy/ and 301s
+   /privacy to it, so linking without it costs every visitor a redirect. */
+const PRIVACY_URL = '/privacy/';
 
 /* Reason for getting in touch. His mockup had these as ten checkboxes; a
    single dropdown carries the same information without ten boxes of chrome. */

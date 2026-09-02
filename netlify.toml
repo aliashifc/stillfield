@@ -18,6 +18,13 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
+# Netlify serves this as application/octet-stream, which some browsers refuse
+# to parse as a manifest.
+[[headers]]
+  for = "/site.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json"
+
 [[headers]]
   for = "/*"
   [headers.values]
